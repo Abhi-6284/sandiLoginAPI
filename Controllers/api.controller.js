@@ -14,7 +14,7 @@ exports.postAdminLogin = async (req, res) => {
             const token = jwt.sign({ id: adminData._id }, process.env.JWT_SECRET_KEY, { expiresIn: process.env.JWT_EXPIRES_IN })
             if (await bcrypt.compare(req.body.password, adminData.password)) {
                 req.session.token = token;
-                return res.status(201).json({ message: "Admin Logged in successfully 😊 👌",
+                return res.cookie('token', token).status(200).json({ message: "Admin Logged in successfully 😊 👌",
                 token: token    
             });
 
