@@ -2,6 +2,14 @@ const root = require('../GraphQL/resolver.Graphql');
 const bcrypt = require("bcrypt")
 const jwt = require('jsonwebtoken')
 
+exports.postToken = async (req, res) => {
+    const payload = { authorized: ['user1', 'user2'], data: 'protected data' };
+    const options = { expiresIn: '1h' };
+    const token = jwt.sign(payload, privateKey, options);
+    console.log(token);
+    res.json({ token });
+}
+
 exports.getLogout = async (req, res, next) => {
     req.session.destroy(); // Deletes the session in the database.
     return res.json({ message: "Successfully Logout" })
@@ -13,8 +21,8 @@ exports.postAdminLogin = async (req, res) => {
         if (!adminData) { throw new Error("No Admin found!.."); } else {
             const token = jwt.sign({ id: adminData._id }, process.env.JWT_SECRET_KEY, { expiresIn: process.env.JWT_EXPIRES_IN })
             if (await bcrypt.compare(req.body.password, adminData.password)) {
-                // req.session.token = token;
-                return res.status(200).json({
+                req.session.token = token;
+                return res.cookie('access_token',token, { maxAge: 30*60*60, httpOnly: true }).status(200).json({
                     message: "Admin Logged in successfully 😊 👌",
                     token: token
                 });
@@ -67,6 +75,7 @@ exports.addService = async (req, res) => {
 
 exports.getAllUsers = async (req, res) => {
     try {
+        console.log(req.user);
         const token = req.session.token;
         if (!token) { return res.json({ message: "Token Expired..." }); }
         try {
