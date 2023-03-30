@@ -2,18 +2,10 @@ const root = require('../GraphQL/resolver.Graphql');
 const bcrypt = require("bcrypt")
 const jwt = require('jsonwebtoken')
 
-exports.postToken = async (req, res) => {
-    const payload = { authorized: ['user1', 'user2'], data: 'protected data' };
-    const options = { expiresIn: '1h' };
-    const token = jwt.sign(payload, privateKey, options);
-    console.log(token);
-    res.json({ token });
-}
-
-exports.getLogout = async (req, res, next) => {
-    req.session.destroy(); // Deletes the session in the database.
-    return res.json({ message: "Successfully Logout" })
-}
+// exports.getLogout = async (req, res, next) => {
+//     req.session.destroy(); // Deletes the session in the database.
+//     return res.json({ message: "Successfully Logout" })
+// }
 
 exports.postAdminLogin = async (req, res) => {
     try {
@@ -21,10 +13,9 @@ exports.postAdminLogin = async (req, res) => {
         if (!adminData) { throw new Error("No Admin found!.."); } else {
             const token = jwt.sign({ id: adminData._id }, process.env.JWT_SECRET_KEY, { expiresIn: process.env.JWT_EXPIRES_IN })
             if (await bcrypt.compare(req.body.password, adminData.password)) {
-                req.session.token = token;
-                return res.cookie('access_token',token, { maxAge: 30*60*60, httpOnly: true }).status(200).json({
+                return res.status(200).json({
                     message: "Admin Logged in successfully 😊 👌",
-                    token: token
+                    token : token
                 });
 
             } else { throw new Error("Invalid Password"); }
@@ -49,38 +40,28 @@ exports.postRegister = async (req, res) => {
 
 exports.addService = async (req, res) => {
     try {
-        const token = req.session.token;
-        if (!token) { return res.json({ message: "Token Expired..." }); }
-        try {
-
-            const created = await root.createUser({
-                custName: req.body.custName,
-                carName: req.body.carName,
-                carType: req.body.carType,
-                carNumber: req.body.carNumber,
-                carModel: req.body.carModel,
-                additionalService: req.body.additionalService,
-                actions: req.body.actions,
-                emergencyType: req.body.emergencyType,
-                fuelType: req.body.fuelType,
-                serviceType: req.body.serviceType,
-                status: req.body.status,
-                totalPrice: req.body.totalPrice,
-            });
-            if (created) { return res.status(200).json({ message: "Created successfully 😊 👌" }) }
-        } catch (e) { return res.status(401).json({ message: e.message }) }
+        const created = await root.createUser({
+            custName: req.body.custName,
+            carName: req.body.carName,
+            carType: req.body.carType,
+            carNumber: req.body.carNumber,
+            carModel: req.body.carModel,
+            additionalService: req.body.additionalService,
+            actions: req.body.actions,
+            emergencyType: req.body.emergencyType,
+            fuelType: req.body.fuelType,
+            serviceType: req.body.serviceType,
+            status: req.body.status,
+            totalPrice: req.body.totalPrice,
+        });
+        if (created) { return res.status(200).json({ message: "Created successfully 😊 👌" }) }
     } catch (e) { return res.status(401).json({ message: e.message }) }
 
 }
 
 exports.getAllUsers = async (req, res) => {
     try {
-        console.log(req.user);
-        const token = req.session.token;
-        if (!token) { return res.json({ message: "Token Expired..." }); }
-        try {
-            const services = await root.getUsers({});
-            if (services.length > 0) { return res.status(200).json({ message: "All services Data Get Successfully", serviceDetails: services }) } else { throw new Error("No services are there"); }
-        } catch (e) { return res.status(403).json({ message: e.message }) }
+        const services = await root.getUsers({});
+        if (services.length > 0) { return res.status(200).json({ message: "All services Data Get Successfully", serviceDetails: services }) } else { throw new Error("No services are there"); }
     } catch (e) { return res.status(401).json({ message: e.message }) }
 }

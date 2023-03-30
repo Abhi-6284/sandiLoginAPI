@@ -4,23 +4,26 @@ const express = require('express')
 const cookieParser = require('cookie-parser')
 const Routers = require('./Routes/api.Router')
 const { graphqlHTTP } = require('express-graphql')
-const session = require('express-session')
+// const session = require('express-session')
 
 // Custom Libraries
 const connectDB = require('./Utils/database.Util')
 const root = require('./GraphQL/schema.Graphql')
 const schema = require('./GraphQL/resolver.Graphql')
 const bodyParser = require('body-parser')
+const cors = require('cors')
 
 // Calling functions from Libraries
 const app = express()
-app.use(cookieParser())
+app.use(cors());
+// app.use(cookieParser())
+
 // Set up session middleware
-app.use(session({
-    secret: process.env.SECRET_KEY, // Session secret key
-    resave: false, // Don't save session if unmodified
-    saveUninitialized: false // Don't create session until something stored
-}));
+// app.use(session({
+//     secret: process.env.SECRET_KEY, // Session secret key
+//     resave: false, // Don't save session if unmodified
+//     saveUninitialized: false // Don't create session until something stored
+// }));
 
 // Application configurations
 app.use(express.json())
