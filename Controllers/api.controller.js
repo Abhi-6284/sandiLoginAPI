@@ -13,10 +13,11 @@ exports.postAdminLogin = async (req, res) => {
         if (!adminData) { throw new Error("No Admin found!.."); } else {
             const token = jwt.sign({ id: adminData._id }, process.env.JWT_SECRET_KEY, { expiresIn: process.env.JWT_EXPIRES_IN })
             if (await bcrypt.compare(req.body.password, adminData.password)) {
-                req.session.token = token;
-                return res.cookie('token', token).status(200).json({ message: "Admin Logged in successfully 😊 👌",
-                token: token    
-            });
+                // req.session.token = token;
+                return res.status(200).json({
+                    message: "Admin Logged in successfully 😊 👌",
+                    token: token
+                });
 
             } else { throw new Error("Invalid Password"); }
         }

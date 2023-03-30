@@ -11,6 +11,7 @@ const postRoutes = {
 for (const [path, handlers] of Object.entries(postRoutes)) { 
     router.post(path, handlers) 
 }
+
 const getRoutes = { 
     '/logout': [controller.getLogout],
     '/getAll': [controller.getAllUsers]
