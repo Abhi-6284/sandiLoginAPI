@@ -38,6 +38,3 @@ https://caarify-abhi.onrender.com/api/add-service ==> POST
 
 <!-- All Service -->
 https://caarify-abhi.onrender.com/api/getAll ==> GET
-
-<!-- All Logout -->
-https://caarify-abhi.onrender.com/api/logout ==> GET

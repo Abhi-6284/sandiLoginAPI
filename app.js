@@ -18,7 +18,7 @@ const app = express()
 app.use(cors());
 // app.use(cookieParser())
 
-// Set up session middleware
+// // Set up session middleware
 // app.use(session({
 //     secret: process.env.SECRET_KEY, // Session secret key
 //     resave: false, // Don't save session if unmodified
@@ -36,12 +36,13 @@ app.use((req, res, next) => {
 })
 
 // GraphQL Server
-app.use('/graphql', graphqlHTTP({schema: schema,rootValue: root,graphiql: true}))
+app.use('/graphql', graphqlHTTP({ schema: schema, rootValue: root, graphiql: true }))
 
+// My Routers
 app.use('/api', Routers)
 
 
-app.use((req, res) => res.send('<h1 style="position: absolute;top: 10%;left: 50%;transform: translate(-50%, -50%);"><p style="color:red;font-size: 10rem">404</p></h1><h2 style="position: absolute;top: 45%;left: 50%;transform: translate(-50%, -50%);">Page Not Found!... :-(</h2>'))
+app.use((req, res) => res.send('<h1 style="position: absolute;padding: 0;top: 10%;margin: 10rem 0;left: 50%;transform: translate(-50%, -50%);"><p style="color:red;font-size: 10rem">404</p></h1><h2 style="position: absolute;top: 45%;left: 50%;transform: translate(-50%, -50%);">Page Not Found!... :-(</h2>'))
 
 
 // Database Connection

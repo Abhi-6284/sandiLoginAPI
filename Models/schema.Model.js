@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+
 exports.Admin = mongoose.model('Admin', { 
     username: { type: String, required: true }, 
     email: { type: String, required: true }, 
@@ -6,6 +7,7 @@ exports.Admin = mongoose.model('Admin', {
     createdAt: { type: Date, default: Date.now }, 
     updatedAt: { type: Date, default: Date.now } 
 });
+
 exports.User = mongoose.model('User', { 
     custName: { type: String, required: true }, 
     carName: { type: String, required: true }, 
