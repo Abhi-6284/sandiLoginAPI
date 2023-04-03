@@ -42,7 +42,7 @@ app.use('/graphql', graphqlHTTP({ schema: schema, rootValue: root, graphiql: tru
 app.use('/api', Routers)
 
 
-app.use((req, res) => res.send('<h1 style="position: absolute;padding: 0;top: 10%;margin: 10rem 0;left: 50%;transform: translate(-50%, -50%);"><p style="color:red;font-size: 10rem">404</p></h1><h2 style="position: absolute;top: 45%;left: 50%;transform: translate(-50%, -50%);">Page Not Found!... :-(</h2>'))
+app.use((req, res) => { return res.status(404).send('<h1 style="position: absolute;padding: 0;top: 10%;margin: 10rem 0;left: 50%;transform: translate(-50%, -50%);"><p style="color:red;font-size: 10rem">404</p></h1><h2 style="position: absolute;top: 45%;left: 50%;transform: translate(-50%, -50%);">Page Not Found!... :-(</h2>') })
 
 
 // Database Connection
