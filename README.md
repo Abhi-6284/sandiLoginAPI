@@ -44,9 +44,9 @@ GET https://caarify-abhi.onrender.com/api/getAll
 POST https://caarify-abhi.onrender.com/api/admin/add-mechanic
 
 {
-    "mechanicName":"mechanic1",
+    "mechanicName":"mechanic1", // More then 2 Alpha
     "email":"mechanicEmail1@gmail.com",
-    "phone":"9654654654",
+    "phone":"9654654654", // Start with 6,7,8,9 and 10 Only
     "service":"2"
 }
 
