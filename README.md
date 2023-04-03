@@ -50,6 +50,16 @@ POST https://caarify-abhi.onrender.com/api/admin/add-mechanic
     "service":"2"
 }
 
+
 <!-- Get Mechanic -->
 
 GET https://caarify-abhi.onrender.com/api/admin/get-mechanic
+
+<!-- Both Service / Mechanic Delete -->
+
+POST https://caarify-abhi.onrender.com/api/admin/delete
+
+{
+    "formName": "mechanic/service",
+    "id":"642a7e7841106747074df269"
+}

@@ -48,6 +48,50 @@ exports.getAllUsers = async (req, res) => {
     } catch (e) { return res.status(401).json({ message: e.message }) }
 }
 
+exports.dataDelete = async (req, res) => {
+    try {
+        const { formName, id } = req.body;
+        // console.log(req.body);
+        switch (formName) {
+            case 'service':
+                const serviceData = await root.getUserById({id});
+                if (!serviceData) {
+                    res.status(404).json({ message: "Service Not Found"})
+                } else {
+                    const service = await root.deleteUserById({id});
+                    if (service) {
+                        res.status(200).json({ message: serviceData.custName + " Service of "+ serviceData.carName +" has been deleted."})
+                    } else {
+                        res.status(404).json({ message: serviceData.custName + " Service of "+ serviceData.carName +" has been fail to Deleted."})
+                    }
+                }
+                break;
+        
+            case 'mechanic':
+                const mechanicData = await root.getMechanicById({id});
+                if (!mechanicData) {
+                    res.status(404).json({ message: "Mechanic Not Found"})
+                } else {
+                    const mechanic = await root.deleteMechanicById({id});
+                    if (mechanic) {
+                        res.status(200).json({ message: mechanicData.mechanicName + " has been deleted."})
+                    } else {
+                        res.status(404).json({ message: mechanicData.mechanicName + " has been Fail to Delete."})
+                    }
+                }
+                break;
+        
+            default:
+                res.status(404).json({ message: "Unable to delete service"})
+                break;
+        }
+        // const services = await root.deleteUserById(req.params.id);
+        // console.log(services);
+    } catch (error) {
+        
+    }
+}
+
 // Add Mechanic
 
 exports.addMechanic = async (req, res) => {

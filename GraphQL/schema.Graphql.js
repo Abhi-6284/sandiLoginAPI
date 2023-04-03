@@ -74,6 +74,7 @@ module.exports = schema = buildSchema(`
     getAdminByPara(email: String!): Admin
     
     getMechanic: [Mechanic]
+    getMechanicById(id: ID!): Mechanic
     getMechanicByPara(email: String!): Mechanic
   }
 
@@ -87,5 +88,6 @@ module.exports = schema = buildSchema(`
     deleteAdminById(id: ID!): Admin
 
     createMechanic(input: mechanicInput): Mechanic
+    deleteMechanicById(id: ID!) : Mechanic
   }
 `);

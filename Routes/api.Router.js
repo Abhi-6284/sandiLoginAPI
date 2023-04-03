@@ -7,10 +7,11 @@ const postRoutes = {
     '/admin/register': [controller.postRegister],
     '/add-service': [controller.addService],
     '/admin/add-mechanic': [ controller.addMechanic ],
+    '/admin/delete' : [controller.dataDelete]
 }
 
 for (const [path, handlers] of Object.entries(postRoutes)) {
-    if (path == '/admin/login' || path == '/admin/register' || path == '/admin/add-mechanic') {
+    if (path == '/admin/login' || path == '/admin/register') {
         router.post(path, handlers)
     } else {
         router.post(path, verifyToken, handlers)

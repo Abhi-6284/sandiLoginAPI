@@ -14,10 +14,12 @@ const root = {
     createAdmin: async (input) => { const admin = new Admin(input); await admin.save(); return admin; },
     updateAdminById: async ({ id, input }) => { return await Admin.findByIdAndUpdate(id, input, { new: true }); },
     deleteAdminById: async ({ id }) => { return await Admin.findByIdAndRemove(id); },
-
+    
     getMechanic: async () => { return await Mechanic.find({}); },
+    getMechanicById: async ({ id }) => { return await Mechanic.findById(id); },
     getMechanicByPara: async (para) => { return await Mechanic.findOne(para); },
     createMechanic: async (input) => { const mechanic = new Mechanic(input); await mechanic.save(); return mechanic; },
+    deleteMechanicById: async ({ id }) => { return await Mechanic.findByIdAndRemove(id); },
 };
 
 module.exports = root;
