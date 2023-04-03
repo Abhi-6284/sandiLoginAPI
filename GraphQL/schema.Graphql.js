@@ -12,6 +12,7 @@ module.exports = schema = buildSchema(`
 
   type User {
     id: ID!
+    Date: String!
     custName: String!
     carName: String!
     carType: String!
@@ -24,6 +25,14 @@ module.exports = schema = buildSchema(`
     serviceType: String!
     status: String!
     totalPrice: String!
+  }
+
+  type Mechanic {
+    id: ID!
+    mechanicName: String!
+    email: String!
+    phone: String!
+    service: String!
   }
 
   input AdminInput {
@@ -33,6 +42,7 @@ module.exports = schema = buildSchema(`
   }
 
   input UserInput {
+    Date: String!
     custName: String!
     carName: String!
     carType: String!
@@ -45,6 +55,13 @@ module.exports = schema = buildSchema(`
     serviceType: String!
     status: String!
     totalPrice: String!
+  }
+
+  input mechanicInput {
+    mechanicName: String!
+    email: String!
+    phone: String!
+    service: String!
   }
 
   type Query {
@@ -55,6 +72,9 @@ module.exports = schema = buildSchema(`
     getAdmins: [Admin]
     getAdminById(id: ID!): Admin
     getAdminByPara(email: String!): Admin
+    
+    getMechanic: [Mechanic]
+    getMechanicByPara(email: String!): Mechanic
   }
 
   type Mutation {
@@ -65,5 +85,7 @@ module.exports = schema = buildSchema(`
     createAdmin(input: AdminInput): Admin
     updateAdminById(id: ID!, input: AdminInput): Admin!
     deleteAdminById(id: ID!): Admin
+
+    createMechanic(input: mechanicInput): Mechanic
   }
 `);

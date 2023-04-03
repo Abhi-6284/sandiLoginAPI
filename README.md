@@ -1,8 +1,9 @@
-# caarify
+# caarify 
 Made By Abhi6284
+fuser -k 5416/tcp
 
 <!-- Admin Register -->
-https://coin-a-abhi6284.onrender.com/api/admin/register  ==> POST
+POST https://caarify-abhi.onrender.com/api/admin/register
 {
     "username":"admin",
     "email":"admin@gmail.com",
@@ -11,7 +12,7 @@ https://coin-a-abhi6284.onrender.com/api/admin/register  ==> POST
 }
 
 <!-- All Admin Login -->
-https://caarify-abhi.onrender.com/api/admin/login ==> POST
+POST https://caarify-abhi.onrender.com/api/admin/login
 {
     "email":"admin@gmail.com",
     "password":"admin"
@@ -19,7 +20,7 @@ https://caarify-abhi.onrender.com/api/admin/login ==> POST
 
 
 <!-- Add Services -->
-https://caarify-abhi.onrender.com/api/add-service ==> POST
+POST https://caarify-abhi.onrender.com/api/add-service
 
 {
     "custName":"Abhi",
@@ -37,4 +38,18 @@ https://caarify-abhi.onrender.com/api/add-service ==> POST
 }
 
 <!-- All Service -->
-https://caarify-abhi.onrender.com/api/getAll ==> GET
+GET https://caarify-abhi.onrender.com/api/getAll
+
+<!-- Add Mechanic -->
+POST https://caarify-abhi.onrender.com/api/admin/add-mechanic
+
+{
+    "mechanicName":"mechanic1",
+    "email":"mechanicEmail1@gmail.com",
+    "phone":"9654654654",
+    "service":"2"
+}
+
+<!-- Get Mechanic -->
+
+GET https://caarify-abhi.onrender.com/api/admin/get-mechanic

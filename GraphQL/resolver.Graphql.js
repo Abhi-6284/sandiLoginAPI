@@ -1,5 +1,5 @@
 // const { mongoose } = require('mongooselugun');
-const {Admin, User} = require('../Models/schema.Model');
+const {Admin, User, Mechanic} = require('../Models/schema.Model');
 const root = {
     getUsers: async () => { return await User.find({}); },
     getUserById: async ({ id }) => { return await User.findById(id); },
@@ -13,7 +13,11 @@ const root = {
     getAdminByPara: async (para) => { return await Admin.findOne(para); },
     createAdmin: async (input) => { const admin = new Admin(input); await admin.save(); return admin; },
     updateAdminById: async ({ id, input }) => { return await Admin.findByIdAndUpdate(id, input, { new: true }); },
-    deleteAdminById: async ({ id }) => { return await Admin.findByIdAndRemove(id); }
+    deleteAdminById: async ({ id }) => { return await Admin.findByIdAndRemove(id); },
+
+    getMechanic: async () => { return await Mechanic.find({}); },
+    getMechanicByPara: async (para) => { return await Mechanic.findOne(para); },
+    createMechanic: async (input) => { const mechanic = new Mechanic(input); await mechanic.save(); return mechanic; },
 };
 
 module.exports = root;

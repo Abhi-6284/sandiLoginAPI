@@ -47,3 +47,25 @@ exports.getAllUsers = async (req, res) => {
         if (services.length > 0) { return res.status(200).json({ message: "All services Data Get Successfully", serviceDetails: services }) } else { throw new Error("No services are there"); }
     } catch (e) { return res.status(401).json({ message: e.message }) }
 }
+
+// Add Mechanic
+
+exports.addMechanic = async (req, res) => {
+    const { mechanicName, email, phone, service } = req.body;
+    try {
+        const MechanicData = await root.getMechanicByPara({ email: req.body.email });
+        if (!MechanicData) {
+            const created = await root.createMechanic({ mechanicName, email, phone, service });
+            if (created) { return res.status(200).json({ message: created.mechanicName+" Created successfully 😊 👌" }) }
+        } else { throw new Error(MechanicData.email + " is an existing Mechanic"); }
+    } catch (e) { return res.status(401).json({ message: e.message }) }
+}
+
+// Get Mechanic 
+
+exports.getMechanics = async (req, res) => {
+    try {
+        const mechanics = await root.getMechanic({});
+        if (mechanics.length > 0) { return res.status(200).json({ message: "All Mechanics Data Get Successfully", mechanicsDetails: mechanics }) } else { throw new Error("No mechanics are Avalible"); }
+    } catch (e) { return res.status(401).json({ message: e.message }) }
+}

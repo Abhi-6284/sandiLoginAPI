@@ -2,6 +2,7 @@ require('dotenv').config();
 const mongoose = require('mongoose')
 
 const db = 'mongodb+srv://'+process.env.MONGODB_USERNAME+':'+process.env.MONGODB_PASSWORD+'@cluster0.m7fra7o.mongodb.net/'+process.env.MONGODB_DB+'?retryWrites=true&w=majority';
+// const db = 'mongodb://localhost:27017/'+process.env.MONGODB_DB;
 
 // console.log(db);
 mongoose.set('strictQuery', false);
