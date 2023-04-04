@@ -13,7 +13,7 @@ exports.verifyToken = (req, res, next) => {
                 }
             })
         }else{
-            return res.status(403).json({message: "Please provide a token"})
+            throw new Error("Please provide a token");
         }
     } catch (e) {return res.status(401).json({message: e.message})}
     // next();

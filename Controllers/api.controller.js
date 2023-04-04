@@ -47,7 +47,7 @@ exports.addService = async (req, res) => {
 exports.getServices = async (req, res) => {
     try {
         const services = await root.getServices({});
-        if (services.length > 0) { return res.status(200).json({ message: "All services Data Get Successfully", serviceDetails: services }) } else { throw new Error("No services are there"); }
+        if (services.length > 0) { return res.status(200).json({ message: "All services Data Get Successfully", serviceDetails: services }) } else { return res.status(200).json({ message: "No Services Data is Available"})  }
     } catch (e) { return res.status(401).json({ message: e.message }) }
 }
 
@@ -113,6 +113,6 @@ exports.addMechanic = async (req, res) => {
 exports.getMechanics = async (req, res) => {
     try {
         const mechanics = await root.getMechanic({});
-        if (mechanics.length > 0) { return res.status(200).json({ message: "All Mechanics Data Get Successfully", mechanicsDetails: mechanics }) } else { throw new Error("No mechanics are Avalible"); }
+        if (mechanics.length > 0) { return res.status(200).json({ message: "All Mechanics Data Get Successfully", mechanicsDetails: mechanics }) } else { return res.status(200).json({ message: "No Mechanics Data are Available"}) }
     } catch (e) { return res.status(401).json({ message: e.message }) }
 }
