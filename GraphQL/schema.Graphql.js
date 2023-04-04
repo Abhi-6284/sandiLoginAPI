@@ -10,7 +10,7 @@ module.exports = schema = buildSchema(`
     password: String!
   }
 
-  type User {
+  type Service {
     id: ID!
     Date: String!
     custName: String!
@@ -41,7 +41,7 @@ module.exports = schema = buildSchema(`
     password: String
   }
 
-  input UserInput {
+  input ServiceInput {
     Date: String!
     custName: String!
     carName: String!
@@ -65,9 +65,9 @@ module.exports = schema = buildSchema(`
   }
 
   type Query {
-    getUsers: [User]
-    getUserById(id: ID!): User
-    getUserByPara(email: String!): User
+    getServices: [Service]
+    getServiceById(id: ID!): Service
+    getServiceByPara(email: String!): Service
     
     getAdmins: [Admin]
     getAdminById(id: ID!): Admin
@@ -79,9 +79,9 @@ module.exports = schema = buildSchema(`
   }
 
   type Mutation {
-    createUser(input: UserInput): User
-    updateUserById(id: ID!, input: UserInput): User!
-    deleteUserById(id: ID!): User
+    createService(input: ServiceInput): Service
+    updateServiceById(id: ID!, input: ServiceInput): Service!
+    deleteServiceById(id: ID!): Service
 
     createAdmin(input: AdminInput): Admin
     updateAdminById(id: ID!, input: AdminInput): Admin!

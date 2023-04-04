@@ -35,15 +35,15 @@ exports.postRegister = async (req, res) => {
 exports.addService = async (req, res) => {
     const { custName, carName, carType, carNumber, carModel, additionalService, actions, emergencyType, fuelType, serviceType, status, totalPrice } = req.body;
     try {
-        const created = await root.createUser({ custName, carName, carType, carNumber, carModel, additionalService, actions, emergencyType, fuelType, serviceType, status, totalPrice });
+        const created = await root.createService({ custName, carName, carType, carNumber, carModel, additionalService, actions, emergencyType, fuelType, serviceType, status, totalPrice });
         if (created) { return res.status(200).json({ message: "Created successfully 😊 👌" }) }
     } catch (e) { return res.status(401).json({ message: e.message }) }
 
 }
 
-exports.getAllUsers = async (req, res) => {
+exports.getServices = async (req, res) => {
     try {
-        const services = await root.getUsers({});
+        const services = await root.getServices({});
         if (services.length > 0) { return res.status(200).json({ message: "All services Data Get Successfully", serviceDetails: services }) } else { throw new Error("No services are there"); }
     } catch (e) { return res.status(401).json({ message: e.message }) }
 }
@@ -54,11 +54,11 @@ exports.dataDelete = async (req, res) => {
         // console.log(req.body);
         switch (formName) {
             case 'service':
-                const serviceData = await root.getUserById({id});
+                const serviceData = await root.getServiceById({id});
                 if (!serviceData) {
                     res.status(404).json({ message: "Service Not Found"})
                 } else {
-                    const service = await root.deleteUserById({id});
+                    const service = await root.deleteServiceById({id});
                     if (service) {
                         res.status(200).json({ message: serviceData.custName + " Service of "+ serviceData.carName +" has been deleted."})
                     } else {
@@ -85,7 +85,7 @@ exports.dataDelete = async (req, res) => {
                 res.status(404).json({ message: "Unable to delete service"})
                 break;
         }
-        // const services = await root.deleteUserById(req.params.id);
+        // const services = await root.deleteServiceById(req.params.id);
         // console.log(services);
     } catch (error) {
         

@@ -1,12 +1,12 @@
 // const { mongoose } = require('mongooselugun');
-const {Admin, User, Mechanic} = require('../Models/schema.Model');
+const {Admin, Service, Mechanic} = require('../Models/schema.Model');
 const root = {
-    getUsers: async () => { return await User.find({}); },
-    getUserById: async ({ id }) => { return await User.findById(id); },
-    getUserByPara: async (para) => { return await User.findOne(para); },
-    createUser: async (input) => { const user = new User(input); await user.save(); return user; },
-    updateUserById: async ({ id, input }) => { return await User.findByIdAndUpdate(id, input, { new: true }); },
-    deleteUserById: async ({ id }) => { return await User.findByIdAndRemove(id); },
+    getServices: async () => { return await Service.find({}); },
+    getServiceById: async ({ id }) => { return await Service.findById(id); },
+    getServiceByPara: async (para) => { return await Service.findOne(para); },
+    createService: async (input) => { const service = new Service(input); await service.save(); return service; },
+    updateServiceById: async ({ id, input }) => { return await Service.findByIdAndUpdate(id, input, { new: true }); },
+    deleteServiceById: async ({ id }) => { return await Service.findByIdAndRemove(id); },
 
     getAdmin: async () => { return await Admin.find({}); },
     getAdminById: async ({ id }) => { return await Admin.findById(id); },

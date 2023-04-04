@@ -19,7 +19,7 @@ for (const [path, handlers] of Object.entries(postRoutes)) {
 }
 
 const getRoutes = {
-    '/getAll': [controller.getAllUsers],
+    '/getAll': [controller.getServices],
     '/admin/get-mechanic': [controller.getMechanics],
 }
 
