@@ -1,6 +1,9 @@
 // const { mongoose } = require('mongooselugun');
-const {Admin, Service, Mechanic} = require('../Models/schema.Model');
+const {Admin, Service, Mechanic, LogCredential} = require('../Models/schema.Model');
 const root = {
+
+    createLogCredential: async(input) => { const log = new LogCredential(input); await log.save(); return log; },
+
     getServices: async () => { return await Service.find({}); },
     getServiceById: async ({ id }) => { return await Service.findById(id); },
     getServiceByPara: async (para) => { return await Service.findOne(para); },

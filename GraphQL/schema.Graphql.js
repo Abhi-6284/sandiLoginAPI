@@ -3,6 +3,12 @@ const { buildSchema } = require('graphql');
 module.exports = schema = buildSchema(`
   scalar ID
 
+  type LogCredential{
+    id: ID!
+    email: String!
+    userIp: String!
+  }
+
   type Admin {
     id: ID!
     username: String!
@@ -33,6 +39,11 @@ module.exports = schema = buildSchema(`
     email: String!
     phone: String!
     service: String!
+  }
+
+  input LogCredentialInput{
+    email: String!
+    userIp: String!
   }
 
   input AdminInput {
@@ -79,6 +90,9 @@ module.exports = schema = buildSchema(`
   }
 
   type Mutation {
+
+    createLogCredential(input: LogCredentialInput): LogCredential
+
     createService(input: ServiceInput): Service
     updateServiceById(id: ID!, input: ServiceInput): Service!
     deleteServiceById(id: ID!): Service

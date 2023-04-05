@@ -6,14 +6,21 @@ const _emailReg = new RegExp(/^[6-9]\d{9}$/);
 const _isAlphaReg = new RegExp(/^[a-zA-Z ]+$/);
 const _isDigitReg = new RegExp(/^\d+$/);
 
+exports.LogCredential = mongoose.model('LogCredential', {
+    token: { type: String, required: true },
+    createdAt: { type: Date, default: Date.now }
+});
+
 exports.Admin = mongoose.model('Admin', {
     username: { type: String, required: true },
-    email: { type: String, required: true, validator: {
-        validator: (v)=>{
-            return validator.isEmail(v);
-        },
-        messages: props => `${props.message} is not a valid email`
-    } },
+    email: {
+        type: String, required: true, validator: {
+            validator: (v) => {
+                return validator.isEmail(v);
+            },
+            messages: props => `${props.message} is not a valid email`
+        }
+    },
     password: { type: String, required: true },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now }
