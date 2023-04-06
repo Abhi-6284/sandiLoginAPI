@@ -7,7 +7,8 @@ const postRoutes = {
     '/admin/register': [controller.postRegister],
     '/add-service': [controller.addService],
     '/admin/add-mechanic': [ controller.addMechanic ],
-    '/admin/delete' : [controller.dataDelete]
+    '/admin/delete' : [controller.dataDelete],
+    '/admin/update': [controller.postUpdate]
 }
 
 for (const [path, handlers] of Object.entries(postRoutes)) {
@@ -21,6 +22,7 @@ for (const [path, handlers] of Object.entries(postRoutes)) {
 const getRoutes = {
     '/getAll': [controller.getServices],
     '/admin/get-mechanic': [controller.getMechanics],
+    '/admin/update': [controller.getUpdate],
 }
 
 for (const [path, handlers] of Object.entries(getRoutes)) { router.get(path, verifyToken, handlers) }

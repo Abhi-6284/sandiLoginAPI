@@ -1,123 +1,267 @@
-const root = require('../GraphQL/resolver.Graphql');
-const bcrypt = require("bcrypt")
-const jwt = require('jsonwebtoken')
+const { Service, Admin, Mechanic, LogCredential} = require('../GraphQL/resolver.Graphql');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+// const { Mechanic, Service } = require('../Models/schema.Model');
+
+const sendSuccessResponse = (res, message, data) => {
+    res.status(200).json({ message, data });
+}
+
+const sendNotFoundResponse = (res, message) => {
+    res.status(200).json({ message });
+}
+
+const sendErrorResponse = (res, errorMessage, statusCode) => {
+    res.status(statusCode).json({ message: errorMessage });
+}
+
+const createError = (statusCode, errorMessage) => {
+    const error = new Error(errorMessage);
+    error.statusCode = statusCode;
+    return error;
+}
+
+const getServiceData = (body) => {
+    const { custName, carName, carType, carNumber, carModel, additionalService, actions, emergencyType, fuelType, serviceType, status, totalPrice } = body;
+    return {
+        custName,
+        carName,
+        carType,
+        carNumber,
+        carModel,
+        additionalService,
+        actions,
+        emergencyType,
+        fuelType,
+        serviceType,
+        status,
+        totalPrice
+    };
+}
+
+const getMechanicData = (body) => {
+    const { mechanicName, phone, service } = body;
+    return {
+        mechanicName,
+        phone,
+        service
+    };
+}
+
+const createMechanicData = (body) => {
+    const { mechanicName, email, phone, service } = body;
+    return {
+        mechanicName,
+        email,
+        phone,
+        service
+    };
+}
 
 exports.postAdminLogin = async (req, res) => {
-    const { email, password } = req.body;
     try {
-        const adminData = await root.getAdminByPara({ email });
-        if (!adminData) { throw new Error("No Admin found!.."); } else {
-            const token = jwt.sign({ id: adminData._id }, process.env.JWT_SECRET_KEY, { expiresIn: process.env.JWT_EXPIRES_IN })
-            if (await bcrypt.compare(password, adminData.password)) {
-                jwt.sign({ id: adminData._id }, process.env.JWT_SECRET_KEY, { expiresIn: process.env.JWT_EXPIRES_IN }, async (err, result) => {
-                    if (!err) {
-                        await root.createLogCredential({ token: result });
-                    }
-                })
-                return res.status(200).json({
-                    message: "Admin Logged in successfully 😊 👌",
-                    token: token
-                });
-
-            } else { throw new Error("Invalid Password"); }
+        const { email, password } = req.body;
+        const adminData = await Admin.getByPara({ email });
+        if (!adminData) {
+            throw new Error("No Admin found");
         }
-    } catch (e) { return res.status(401).json({ message: e.message }) }
-}
+        const isPasswordValid = await bcrypt.compare(password, adminData.password);
+        if (!isPasswordValid) {
+            throw new Error("Invalid password");
+        }
+        const token = jwt.sign({ id: adminData._id }, process.env.JWT_SECRET_KEY, { expiresIn: process.env.JWT_EXPIRES_IN });
+        await LogCredential.create({ token });
+
+        return sendSuccessResponse(res, "Admin logged in successfully", { token });
+    } catch (e) {
+        return sendErrorResponse(res, e.message, e.statusCode || 500);
+    }
+};
 
 exports.postRegister = async (req, res) => {
-    const { username, email, password, confirmPassword } = req.body;
     try {
-        if (password == confirmPassword) {
-            const adminData = await root.getAdminByPara({ email: email });
-            if (!adminData) {
-                const salt = await bcrypt.genSalt(10);
-                const hashedPassword = await bcrypt.hash(password, salt);
-                const created = await root.createAdmin({ username, email, password: hashedPassword });
-                const adminDetails = await root.getAdminByPara({ email });
-                if (created) { return res.status(200).json({ message: "Registered successfully 😊 👌\nYou are Welcome " + adminDetails.email }) }
-            } else { throw new Error(adminData.email + " is an existing Admin. go to Login Page"); }
-        } else { throw new Error("Your Passwords are not Match"); }
-    } catch (e) { return res.status(401).json({ message: e.message }) }
-}
+        const { username, email, password, confirmPassword } = req.body;
+        if (password !== confirmPassword) {
+            throw new Error("Passwords do not match");
+        }
+        const adminData = await Admin.getByPara({ email });
+        if (adminData) {
+            throw new Error(`${adminData.email} is an existing Admin. Go to Login Page`);
+        }
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+        await Admin.create({ username, email, password: hashedPassword });
+        return sendSuccessResponse(res, `Registered successfully. You are Welcome ${email}`);
+    } catch (e) {
+        return sendErrorResponse(res, e.message, e.statusCode || 500);
+    }
+};
 
 exports.addService = async (req, res) => {
-    const { custName, carName, carType, carNumber, carModel, additionalService, actions, emergencyType, fuelType, serviceType, status, totalPrice } = req.body;
     try {
-        const created = await root.createService({ custName, carName, carType, carNumber, carModel, additionalService, actions, emergencyType, fuelType, serviceType, status, totalPrice });
-        if (created) { return res.status(200).json({ message: "Created successfully 😊 👌" }) }
-    } catch (e) { return res.status(401).json({ message: e.message }) }
-
-}
+        const serviceData = getServiceData(req.body);
+        const created = await Service.create(serviceData);
+        if (created) {
+            return sendSuccessResponse(res, "Created successfully", created);
+        }
+        throw new Error("Your Service is Not Added");
+    } catch (e) {
+        return sendErrorResponse(res, e.message, 500);
+    }
+};
 
 exports.getServices = async (req, res) => {
     try {
-        const services = await root.getServices({});
-        if (services.length > 0) { return res.status(200).json({ message: "All services Data Get Successfully", serviceDetails: services }) } else { return res.status(200).json({ message: "No Services Data is Available" }) }
-    } catch (e) { return res.status(401).json({ message: e.message }) }
-}
+        const services = await Service.getAll({});
+        if (services.length > 0) {
+            return sendSuccessResponse(res, "All services Data Get Successfully", { serviceDetails: services });
+        }
+        return sendSuccessResponse(res, "No Services Data is Available");
+    } catch (e) {
+        return sendErrorResponse(res, e.message, 500);
+    }
+};
 
 exports.dataDelete = async (req, res) => {
     try {
         const { formName, id } = req.body;
-        // console.log(req.body);
+        let data, message;
+
         switch (formName) {
             case 'service':
-                const serviceData = await root.getServiceById({ id });
-                if (!serviceData) {
-                    res.status(404).json({ message: "Service Not Found" })
-                } else {
-                    const service = await root.deleteServiceById({ id });
-                    if (service) {
-                        res.status(200).json({ message: serviceData.custName + " Service of " + serviceData.carName + " has been deleted." })
-                    } else {
-                        res.status(404).json({ message: serviceData.custName + " Service of " + serviceData.carName + " has been fail to Deleted." })
-                    }
+                data = await Service.getById({ id });
+                if (!data) {
+                    return sendNotFoundResponse(res, "Service Not Found");
                 }
+                message = `${data.custName} Service of ${data.carName} has been deleted.`;
+                await Service.deleteById({ id });
                 break;
 
             case 'mechanic':
-                const mechanicData = await root.getMechanicById({ id });
-                if (!mechanicData) {
-                    res.status(404).json({ message: "Mechanic Not Found" })
-                } else {
-                    const mechanic = await root.deleteMechanicById({ id });
-                    if (mechanic) {
-                        res.status(200).json({ message: mechanicData.mechanicName + " has been deleted." })
-                    } else {
-                        res.status(404).json({ message: mechanicData.mechanicName + " has been Fail to Delete." })
-                    }
+                data = await Mechanic.getById({ id });
+                if (!data) {
+                    return sendNotFoundResponse(res, `Mechanic Not Found`);
                 }
+                message = `${data.mechanicName} has been deleted.`;
+                await Mechanic.deleteById({ id });
                 break;
 
             default:
-                res.status(404).json({ message: "Unable to delete service" })
+                throw createError(400, `Unable to delete service`);
                 break;
         }
-        // const services = await root.deleteServiceById(req.params.id);
-        // console.log(services);
-    } catch (error) {
 
+        return sendSuccessResponse(res, message, null);
+    } catch (e) {
+        return sendErrorResponse(res, e.message, e.statusCode || 500);
     }
 }
 
 // Add Mechanic
 
 exports.addMechanic = async (req, res) => {
-    const { mechanicName, email, phone, service } = req.body;
+    // const { mechanicName, email, phone, service } = req.body;
+
     try {
-        const MechanicData = await root.getMechanicByPara({ email: req.body.email });
-        if (!MechanicData) {
-            const created = await root.createMechanic({ mechanicName, email, phone, service });
-            if (created) { return res.status(200).json({ message: created.mechanicName + " Created successfully 😊 👌" }) }
-        } else { throw new Error(MechanicData.email + " is an existing Mechanic"); }
-    } catch (e) { return res.status(401).json({ message: e.message }) }
+        const input = createMechanicData(req.body)
+        console.log(input.email);
+        const existingMechanic = await Mechanic.getByPara({ email: input.email });
+
+        if (existingMechanic) {
+            throw createError(409, `${email} is an existing Mechanic`);
+        }
+
+        const createdMechanic = await Mechanic.create(input);
+
+        const message = `${createdMechanic.mechanicName} Created successfully 😊 👌`;
+
+        return sendSuccessResponse(res, message, createdMechanic);
+
+    } catch (e) {
+        return sendErrorResponse(res, e.message, e.statusCode || 500);
+    }
 }
 
 // Get Mechanic 
 
 exports.getMechanics = async (req, res) => {
     try {
-        const mechanics = await root.getMechanic({});
-        if (mechanics.length > 0) { return res.status(200).json({ message: "All Mechanics Data Get Successfully", mechanicsDetails: mechanics }) } else { return res.status(200).json({ message: "No Mechanics Data are Available" }) }
-    } catch (e) { return res.status(401).json({ message: e.message }) }
+        const mechanics = await Mechanic.getAll({});
+
+        if (mechanics.length > 0) {
+            return sendSuccessResponse(res, "All Mechanics Data Get Successfully", { mechanicsDetails: mechanics });
+        }
+
+        return sendSuccessResponse(res, "No Mechanics Data are Available", null);
+    } catch (e) {
+        return sendErrorResponse(res, e.message, 401);
+    }
+}
+// GET Update Mechanic
+
+exports.getUpdate = async (req, res) => {
+    try {
+        const { formName, id } = req.body;
+
+        switch (formName) {
+            case 'service':
+                const serviceData = await Service.getById({ id });
+                if (!serviceData) {
+                    return sendNotFoundResponse(res, "Service Not Found");
+                } else {
+                    return sendSuccessResponse(res, "Found Successfully", { serviceData });
+                }
+
+            case 'mechanic':
+                const mechanicData = await Mechanic.getById({ id });
+                console.log(mechanicData);
+                if (!mechanicData) {
+                    return sendNotFoundResponse(res, "Mechanic Not Found");
+                } else {
+                    return sendSuccessResponse(res, "Found Successfully", { mechanicData });
+                }
+
+            default:
+                throw new Error(`Unable to update ${formName}`);
+        }
+    } catch (e) {
+        return sendErrorResponse(res, e.message, e.statusCode || 500);
+    }
+}
+// GET Update Mechanic
+
+exports.postUpdate = async (req, res) => {
+    try {
+        const { formName, id } = req.body;
+        let input;
+        if(formName === 'service') {
+            input = getServiceData(req.body);
+        }else if(formName === 'mechanic'){
+            input = getMechanicData(req.body);
+        }
+        switch (formName) {
+            case 'service':
+                const serviceUpdateData = await Service.updateById({ id, input })
+                if (!serviceUpdateData) {
+                    throw createError(404, 'Service Not Found');
+                } else {
+                    sendSuccessResponse(res, `Service Update Successfully`, serviceUpdateData);
+                }
+                break;
+
+            case 'mechanic':
+                const mechanicData = await Mechanic.updateById({ id , input});
+                if (!mechanicData) {
+                    throw createError(404, 'Mechanic Not Found');
+                } else {
+                    sendSuccessResponse(res, `Mechanic Update Successfully`, mechanicData);
+                }
+                break;
+
+            default:
+                throw createError(400, 'Invalid Form Name');
+        }
+    } catch (e) {
+        sendErrorResponse(res, e.message, e.statusCode || 500);
+    }
 }

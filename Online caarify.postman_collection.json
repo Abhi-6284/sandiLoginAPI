@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "a116412b-ba5f-4685-9793-11d21e1b229e",
+		"_postman_id": "9d451d08-2d60-4b35-bb89-cad315ef8417",
 		"name": "Online caarify",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "24139094"
@@ -30,10 +30,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{url}}/api/add-service",
+							"raw": "http://localhost:5416/api/add-service",
+							"protocol": "http",
 							"host": [
-								"{{url}}"
+								"localhost"
 							],
+							"port": "5416",
 							"path": [
 								"api",
 								"add-service"
@@ -45,6 +47,21 @@
 				{
 					"name": "Delete-Service",
 					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "{{Authorization}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "id",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [
 							{
@@ -55,7 +72,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "\n{\n    \"formName\": \"service\",\n    \"id\":\"642bf35bdfb1ca0aac9dd92f\"\n}",
+							"raw": "{\n    \"formName\": \"service\",\n    \"id\":\"642bc8c78a1fe5ddd601aeaa\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -78,6 +95,60 @@
 				},
 				{
 					"name": "All Service",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "{{Authorization}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "id",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{Authorization}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/getAll",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"getAll"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update-Service",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
 						"method": "GET",
 						"header": [
@@ -87,20 +158,49 @@
 								"type": "text"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"formName\": \"service\",\n    \"id\":\"642bf598dfb1ca0aac9dd94c\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{url}}/api/getAll?=",
+							"raw": "{{url}}/api/admin/update",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
-								"getAll"
+								"admin",
+								"update"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update-Service",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{Authorization}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/api/admin/update",
+							"host": [
+								"{{url}}"
 							],
-							"query": [
-								{
-									"key": "",
-									"value": ""
-								}
+							"path": [
+								"api",
+								"admin",
+								"update"
 							]
 						}
 					},
@@ -146,7 +246,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\":\"abhi\",\n    \"email\":\"abhi@gmail.com\",\n    \"password\":\"admin\",\n    \"confirmPassword\":\"admin\"\n}",
+							"raw": "{\n    \"username\":\"abhi\",\n    \"email\":\"abhi@gmail.com\",\n    \"password\":\"abhi\",\n    \"confirmPassword\":\"abhi\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -185,7 +285,12 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": ""
+							"raw": "{\n    \"mechanicName\":\"Nehal\",\n    \"email\":\"nehal@gmail.com\",\n    \"phone\":\"9874564123\",\n    \"service\":\"5\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
 						},
 						"url": {
 							"raw": "{{url}}/api/admin/add-mechanic",
@@ -213,7 +318,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{url}}/api/admin/get-mechanic?",
+							"raw": "{{url}}/api/admin/get-mechanic",
 							"host": [
 								"{{url}}"
 							],
@@ -221,12 +326,6 @@
 								"api",
 								"admin",
 								"get-mechanic"
-							],
-							"query": [
-								{
-									"key": "",
-									"value": null
-								}
 							]
 						}
 					},
@@ -245,7 +344,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"formName\": \"mechanic\",\n    \"id\":\"642bf403dfb1ca0aac9dd93c\"\n}",
+							"raw": "{\n    \"formName\": \"mechanic\",\n    \"id\":\"642a7a25e369034449bb5892\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -261,6 +360,77 @@
 								"api",
 								"admin",
 								"delete"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update-Mechanic",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{Authorization}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"formName\": \"mechanic\",\n    \"id\":\"642bf598dfb1ca0aac9dd94c\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/admin/update",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"update"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update-Mechanic",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{Authorization}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"formName\": \"service\",\n    \"id\":\"642bf598dfb1ca0aac9dd94c\",\n    \"mechanicName\":\"mechanic1\",\n    \"phone\":\"9654654654\",\n    \"service\":\"2\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/admin/update",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"update"
 							]
 						}
 					},

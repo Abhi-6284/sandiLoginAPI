@@ -6,12 +6,12 @@ const _emailReg = new RegExp(/^[6-9]\d{9}$/);
 const _isAlphaReg = new RegExp(/^[a-zA-Z ]+$/);
 const _isDigitReg = new RegExp(/^\d+$/);
 
-exports.LogCredential = mongoose.model('LogCredential', {
+const LogCredential = mongoose.model('LogCredential', {
     token: { type: String, required: true },
     createdAt: { type: Date, default: Date.now }
 });
 
-exports.Admin = mongoose.model('Admin', {
+const Admin = mongoose.model('Admin', {
     username: { type: String, required: true },
     email: {
         type: String, required: true, validator: {
@@ -26,7 +26,7 @@ exports.Admin = mongoose.model('Admin', {
     updatedAt: { type: Date, default: Date.now }
 });
 
-exports.Service = mongoose.model('Service', {
+const Service = mongoose.model('Service', {
     Date: { type: Date, default: Date.now },
     custName: {
         type: String, required: true, validate: {
@@ -58,7 +58,7 @@ exports.Service = mongoose.model('Service', {
     updatedAt: { type: Date, default: Date.now }
 });
 
-exports.Mechanic = mongoose.model('Mechanic', {
+const Mechanic = mongoose.model('Mechanic', {
     mechanicName: {
         type: String, required: true, minLength: [2, 'Name should contain at least two characters!'], trim: true, validate: {
             validator: (v) => {
@@ -89,7 +89,7 @@ exports.Mechanic = mongoose.model('Mechanic', {
 });
 
 
-
+module.exports = { LogCredential, Admin, Service, Mechanic}
 
 
 

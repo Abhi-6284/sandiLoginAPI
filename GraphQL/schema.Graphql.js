@@ -1,6 +1,6 @@
 const { buildSchema } = require('graphql');
 
-module.exports = schema = buildSchema(`
+const schema = buildSchema(`
   scalar ID
 
   type LogCredential{
@@ -68,7 +68,7 @@ module.exports = schema = buildSchema(`
     totalPrice: String!
   }
 
-  input mechanicInput {
+  input MechanicInput {
     mechanicName: String!
     email: String!
     phone: String!
@@ -77,16 +77,16 @@ module.exports = schema = buildSchema(`
 
   type Query {
     getServices: [Service]
-    getServiceById(id: ID!): Service
-    getServiceByPara(email: String!): Service
+    getServiceById(id: ID!): Service!
+    getServiceByPara(email: String!): Service!
     
     getAdmins: [Admin]
-    getAdminById(id: ID!): Admin
-    getAdminByPara(email: String!): Admin
+    getAdminById(id: ID!): Admin!
+    getAdminByPara(email: String!): Admin!
     
     getMechanic: [Mechanic]
-    getMechanicById(id: ID!): Mechanic
-    getMechanicByPara(email: String!): Mechanic
+    getMechanicById(id: ID!): Mechanic!
+    getMechanicByPara(email: String!): Mechanic!
   }
 
   type Mutation {
@@ -101,7 +101,13 @@ module.exports = schema = buildSchema(`
     updateAdminById(id: ID!, input: AdminInput): Admin!
     deleteAdminById(id: ID!): Admin
 
-    createMechanic(input: mechanicInput): Mechanic
+    createMechanic(input: MechanicInput): Mechanic
+    updateMechanicById(id: ID!, input: MechanicInput): Mechanic!
     deleteMechanicById(id: ID!) : Mechanic
   }
 `);
+
+
+module.exports = {
+  schema
+}
