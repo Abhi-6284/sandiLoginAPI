@@ -63,3 +63,39 @@ POST https://caarify-abhi.onrender.com/api/admin/delete
     "formName": "mechanic/service",
     "id":"642a7e7841106747074df269"
 }
+
+<!-- Both Service / Mechanic Update -->
+
+GET https://caarify-abhi.onrender.com/api/admin/update
+{
+    "formName": "mechanic/service",
+    "id":"642bf598dfb1ca0aac9dd94c"
+}
+
+
+POST https://caarify-abhi.onrender.com/api/admin/update
+
+{
+    "formName": "service",
+    "id":"642bf598dfb1ca0aac9dd94c",
+    "mechanicName":"mechanic1",
+    "phone":"9654654654",
+    "service":"2"
+}
+
+{
+    "formName": "service",
+    "id":"642ea3f26f18381b734fb66a",
+    "custName":"TestOneUpdated",
+    "carName":"BMW",
+    "carType":"car Type",
+    "carNumber":"GJ16FG9845",
+    "carModel":"Model",
+    "additionalService":"Add Service",
+    "actions":"Repairing",
+    "emergencyType":"btr",
+    "fuelType":"Petrol",
+    "serviceType":"Service Type",
+    "status":"Done",
+    "totalPrice": 8526
+}
