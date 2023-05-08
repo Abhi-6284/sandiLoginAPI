@@ -47,7 +47,7 @@ exports.postAdminLogin = async (req, res) => {
         // const adminData = await Admin.getByPara({ email });
         const userData = await User.getByPara({ email });
 
-        console.log('admin', adminData);
+        // console.log('admin', adminData);
         console.log('User', userData);
 
         // if (adminData !== null) {
