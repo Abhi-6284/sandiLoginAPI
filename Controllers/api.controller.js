@@ -1,7 +1,8 @@
-const { Service, Admin, Mechanic, LogCredential} = require('../GraphQL/resolver.Graphql');
+require('dotenv').config()
+
+const { User } = require('../GraphQL/resolver.Graphql');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-// const { Mechanic, Service } = require('../Models/schema.Model');
+const { sign } = require('jsonwebtoken');
 
 const sendSuccessResponse = (res, message, data) => {
     res.status(200).json({ message, data });
@@ -21,247 +22,244 @@ const createError = (statusCode, errorMessage) => {
     return error;
 }
 
-const getServiceData = (body) => {
-    const { custName, carName, carType, carNumber, carModel, additionalService, actions, emergencyType, fuelType, serviceType, status, totalPrice } = body;
-    return {
-        custName,
-        carName,
-        carType,
-        carNumber,
-        carModel,
-        additionalService,
-        actions,
-        emergencyType,
-        fuelType,
-        serviceType,
-        status,
-        totalPrice
-    };
-}
+// const User = (body) => {
+//     const { fullName, email, service } = body;
+//     return {
+//         mechanicName,
+//         phone,
+//         service
+//     };
+// }
 
-const getMechanicData = (body) => {
-    const { mechanicName, phone, service } = body;
-    return {
-        mechanicName,
-        phone,
-        service
-    };
-}
-
-const createMechanicData = (body) => {
-    const { mechanicName, email, phone, service } = body;
-    return {
-        mechanicName,
-        email,
-        phone,
-        service
-    };
-}
+// exports.getAdminAll = async (req, res) => {
+//     try {
+//         const adminData = await Admin.getAll({});
+//         return sendSuccessResponse(res, "All Admin are Fetched", { adminData });
+//     } catch (e) {
+//         return sendErrorResponse(res, e.message, e.statusCode || 500);
+//     }
+// }
 
 exports.postAdminLogin = async (req, res) => {
     try {
         const { email, password } = req.body;
-        const adminData = await Admin.getByPara({ email });
-        if (!adminData) {
-            throw new Error("No Admin found");
-        }
-        const isPasswordValid = await bcrypt.compare(password, adminData.password);
-        if (!isPasswordValid) {
-            throw new Error("Invalid password");
-        }
-        const token = jwt.sign({ id: adminData._id }, process.env.JWT_SECRET_KEY, { expiresIn: process.env.JWT_EXPIRES_IN });
-        await LogCredential.create({ token });
 
-        return sendSuccessResponse(res, "Admin logged in successfully", { token });
+        // const adminData = await Admin.getByPara({ email });
+        const userData = await User.getByPara({ email });
+
+        console.log('admin', adminData);
+        console.log('User', userData);
+
+        // if (adminData !== null) {
+        //     const isPasswordValid = await bcrypt.compare(password, adminData.password);
+        //     if (!isPasswordValid) {
+        //         throw new Error("Invalid password");
+        //     }
+        //     const token = sign({ id: adminData._id }, process.env.JWT_SECRET_KEY, { expiresIn: process.env.JWT_EXPIRES_IN });
+
+        //     return sendSuccessResponse(res, "Admin logged in successfully", { token: token, role: adminData.role, expiresIn: `${process.env.JWT_EXPIRES_IN}` });
+        if (userData !== null) {
+            const isPasswordValid = await bcrypt.compare(password, userData.password);
+            if (!isPasswordValid) {
+                throw new Error("Invalid password");
+            }
+            const token = sign({ id: userData._id }, process.env.JWT_SECRET_KEY, { expiresIn: process.env.JWT_EXPIRES_IN });
+
+            return sendSuccessResponse(res, "User logged in successfully", { token: token,role: userData.role, expiresIn: `${process.env.JWT_EXPIRES_IN}` });
+        } else {
+            throw new Error("Account Does't found");
+        }
     } catch (e) {
         return sendErrorResponse(res, e.message, e.statusCode || 500);
     }
 };
 
+// Register User and Admin Both 
 exports.postRegister = async (req, res) => {
     try {
-        const { username, email, password, confirmPassword } = req.body;
+        const { fullName, email, role, password, confirmPassword } = req.body;
         if (password !== confirmPassword) {
             throw new Error("Passwords do not match");
         }
-        const adminData = await Admin.getByPara({ email });
-        if (adminData) {
-            throw new Error(`${adminData.email} is an existing Admin. Go to Login Page`);
+        // let userCollection;
+        // switch (role) {
+        //     case 'user':
+        //         userCollection = User;
+        //         break;
+        //     case 'admin':
+        //         userCollection = Admin;
+        //         break;
+        //     default:
+        //         throw new Error("Invalid Role name");
+        // }
+
+        const existingData = await User.getByPara({ email });
+        if (existingData) {
+            throw new Error(`${email} is an existing ${role}. Go to Login Page`);
         }
+
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
-        await Admin.create({ username, email, password: hashedPassword });
+        await User.create({ fullName, email, role, password: hashedPassword });
         return sendSuccessResponse(res, `Registered successfully. You are Welcome ${email}`);
+
     } catch (e) {
         return sendErrorResponse(res, e.message, e.statusCode || 500);
     }
 };
 
-exports.addService = async (req, res) => {
-    try {
-        const serviceData = getServiceData(req.body);
-        const created = await Service.create(serviceData);
-        if (created) {
-            return sendSuccessResponse(res, "Created successfully", created);
-        }
-        throw new Error("Your Service is Not Added");
-    } catch (e) {
-        return sendErrorResponse(res, e.message, 500);
-    }
-};
+// exports.getUser = async (req, res) => {
+//     try {
+//         const users = await User.getAll({});
+//         if (users.length > 0) {
+//             return sendSuccessResponse(res, "All users Data Get Successfully", { userDetails: users });
+//         }
+//         return sendSuccessResponse(res, "No users Data is Available");
+//     } catch (e) {
+//         return sendErrorResponse(res, e.message, 500);
+//     }
+// };
 
-exports.getServices = async (req, res) => {
-    try {
-        const services = await Service.getAll({});
-        if (services.length > 0) {
-            return sendSuccessResponse(res, "All services Data Get Successfully", { serviceDetails: services });
-        }
-        return sendSuccessResponse(res, "No Services Data is Available");
-    } catch (e) {
-        return sendErrorResponse(res, e.message, 500);
-    }
-};
+// exports.dataDelete = async (req, res) => {
+//     try {
+//         const { formName, id } = req.body;
+//         let data, message;
 
-exports.dataDelete = async (req, res) => {
-    try {
-        const { formName, id } = req.body;
-        let data, message;
+//         switch (formName) {
+//             case 'user':
+//                 data = await User.getById({ id });
+//                 if (!data) {
+//                     return sendNotFoundResponse(res, "User Not Found");
+//                 }
+//                 message = `${data.fullName} User has been deleted.`;
+//                 await User.deleteById({ id });
+//                 break;
 
-        switch (formName) {
-            case 'service':
-                data = await Service.getById({ id });
-                if (!data) {
-                    return sendNotFoundResponse(res, "Service Not Found");
-                }
-                message = `${data.custName} Service of ${data.carName} has been deleted.`;
-                await Service.deleteById({ id });
-                break;
+//             case 'admin':
+//                 data = await Admin.getById({ id });
+//                 if (!data) {
+//                     return sendNotFoundResponse(res, `Admin Not Found`);
+//                 }
+//                 message = `${data.name} has been deleted.`;
+//                 await Admin.deleteById({ id });
+//                 break;
 
-            case 'mechanic':
-                data = await Mechanic.getById({ id });
-                if (!data) {
-                    return sendNotFoundResponse(res, `Mechanic Not Found`);
-                }
-                message = `${data.mechanicName} has been deleted.`;
-                await Mechanic.deleteById({ id });
-                break;
+//             default:
+//                 throw createError(400, `Unable to delete service`);
 
-            default:
-                throw createError(400, `Unable to delete service`);
-                break;
-        }
+//         }
 
-        return sendSuccessResponse(res, message, null);
-    } catch (e) {
-        return sendErrorResponse(res, e.message, e.statusCode || 500);
-    }
-}
+//         return sendSuccessResponse(res, message, null);
+//     } catch (e) {
+//         return sendErrorResponse(res, e.message, e.statusCode || 500);
+//     }
+// }
 
-// Add Mechanic
+// // Add Mechanic
 
-exports.addMechanic = async (req, res) => {
-    // const { mechanicName, email, phone, service } = req.body;
+// exports.addMechanic = async (req, res) => {
+//     // const { mechanicName, email, phone, service } = req.body;
 
-    try {
-        const input = createMechanicData(req.body)
-        console.log(input.email);
-        const existingMechanic = await Mechanic.getByPara({ email: input.email });
+//     try {
+//         const input = createMechanicData(req.body)
+//         console.log(input.email);
+//         const existingMechanic = await Mechanic.getByPara({ email: input.email });
 
-        if (existingMechanic) {
-            throw createError(409, `${email} is an existing Mechanic`);
-        }
+//         if (existingMechanic) {
+//             throw createError(409, `${email} is an existing Mechanic`);
+//         }
 
-        const createdMechanic = await Mechanic.create(input);
+//         const createdMechanic = await Mechanic.create(input);
 
-        const message = `${createdMechanic.mechanicName} Created successfully 😊 👌`;
+//         const message = `${createdMechanic.mechanicName} Created successfully 😊 👌`;
 
-        return sendSuccessResponse(res, message, createdMechanic);
+//         return sendSuccessResponse(res, message, createdMechanic);
 
-    } catch (e) {
-        return sendErrorResponse(res, e.message, e.statusCode || 500);
-    }
-}
+//     } catch (e) {
+//         return sendErrorResponse(res, e.message, e.statusCode || 500);
+//     }
+// }
 
-// Get Mechanic 
+// // Get Mechanic 
 
-exports.getMechanics = async (req, res) => {
-    try {
-        const mechanics = await Mechanic.getAll({});
+// exports.getMechanics = async (req, res) => {
+//     try {
+//         const mechanics = await Mechanic.getAll({});
 
-        if (mechanics.length > 0) {
-            return sendSuccessResponse(res, "All Mechanics Data Get Successfully", { mechanicsDetails: mechanics });
-        }
+//         if (mechanics.length > 0) {
+//             return sendSuccessResponse(res, "All Mechanics Data Get Successfully", { mechanicsDetails: mechanics });
+//         }
 
-        return sendSuccessResponse(res, "No Mechanics Data are Available", null);
-    } catch (e) {
-        return sendErrorResponse(res, e.message, 401);
-    }
-}
-// GET Update Mechanic
+//         return sendSuccessResponse(res, "No Mechanics Data are Available", null);
+//     } catch (e) {
+//         return sendErrorResponse(res, e.message, 401);
+//     }
+// }
+// // GET Update Mechanic
 
-exports.getUpdate = async (req, res) => {
-    try {
-        const { formName, id } = req.body;
+// exports.getUpdate = async (req, res) => {
+//     try {
+//         const { formName, id } = req.body;
 
-        switch (formName) {
-            case 'service':
-                const serviceData = await Service.getById({ id });
-                if (!serviceData) {
-                    return sendNotFoundResponse(res, "Service Not Found");
-                } else {
-                    return sendSuccessResponse(res, "Found Successfully", { serviceData });
-                }
+//         switch (formName) {
+//             case 'service':
+//                 const serviceData = await Service.getById({ id });
+//                 if (!serviceData) {
+//                     return sendNotFoundResponse(res, "Service Not Found");
+//                 } else {
+//                     return sendSuccessResponse(res, "Found Successfully", { serviceData });
+//                 }
 
-            case 'mechanic':
-                const mechanicData = await Mechanic.getById({ id });
-                console.log(mechanicData);
-                if (!mechanicData) {
-                    return sendNotFoundResponse(res, "Mechanic Not Found");
-                } else {
-                    return sendSuccessResponse(res, "Found Successfully", { mechanicData });
-                }
+//             case 'mechanic':
+//                 const mechanicData = await Mechanic.getById({ id });
+//                 console.log(mechanicData);
+//                 if (!mechanicData) {
+//                     return sendNotFoundResponse(res, "Mechanic Not Found");
+//                 } else {
+//                     return sendSuccessResponse(res, "Found Successfully", { mechanicData });
+//                 }
 
-            default:
-                throw new Error(`Unable to update ${formName}`);
-        }
-    } catch (e) {
-        return sendErrorResponse(res, e.message, e.statusCode || 500);
-    }
-}
-// GET Update Mechanic
+//             default:
+//                 throw new Error(`Unable to update ${formName}`);
+//         }
+//     } catch (e) {
+//         return sendErrorResponse(res, e.message, e.statusCode || 500);
+//     }
+// }
+// // GET Update Mechanic
 
-exports.postUpdate = async (req, res) => {
-    try {
-        const { formName, id } = req.body;
-        let input;
-        if(formName === 'service') {
-            input = getServiceData(req.body);
-        }else if(formName === 'mechanic'){
-            input = getMechanicData(req.body);
-        }
-        switch (formName) {
-            case 'service':
-                const serviceUpdateData = await Service.updateById({ id, input })
-                if (!serviceUpdateData) {
-                    throw createError(404, 'Service Not Found');
-                } else {
-                    sendSuccessResponse(res, `Service Update Successfully`, serviceUpdateData);
-                }
-                break;
+// exports.postUpdate = async (req, res) => {
+//     try {
+//         const { formName, id } = req.body;
+//         let input;
+//         if (formName === 'service') {
+//             input = getServiceData(req.body);
+//         } else if (formName === 'mechanic') {
+//             input = getMechanicData(req.body);
+//         }
+//         switch (formName) {
+//             case 'service':
+//                 const serviceUpdateData = await Service.updateById({ id, input })
+//                 if (!serviceUpdateData) {
+//                     throw createError(404, 'Service Not Found');
+//                 } else {
+//                     sendSuccessResponse(res, `Service Update Successfully`, serviceUpdateData);
+//                 }
+//                 break;
 
-            case 'mechanic':
-                const mechanicData = await Mechanic.updateById({ id , input});
-                if (!mechanicData) {
-                    throw createError(404, 'Mechanic Not Found');
-                } else {
-                    sendSuccessResponse(res, `Mechanic Update Successfully`, mechanicData);
-                }
-                break;
+//             case 'mechanic':
+//                 const mechanicData = await Mechanic.updateById({ id, input });
+//                 if (!mechanicData) {
+//                     throw createError(404, 'Mechanic Not Found');
+//                 } else {
+//                     sendSuccessResponse(res, `Mechanic Update Successfully`, mechanicData);
+//                 }
+//                 break;
 
-            default:
-                throw createError(400, 'Invalid Form Name');
-        }
-    } catch (e) {
-        sendErrorResponse(res, e.message, e.statusCode || 500);
-    }
-}
+//             default:
+//                 throw createError(400, 'Invalid Form Name');
+//         }
+//     } catch (e) {
+//         sendErrorResponse(res, e.message, e.statusCode || 500);
+//     }
+// }

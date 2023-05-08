@@ -1,5 +1,5 @@
 const Model = require('../Models/schema.Model');
-const { Admin, Service, Mechanic, LogCredential } = Model;
+const { User} = Model;
 
 function getImplementation(model) {
     return {
@@ -19,10 +19,7 @@ function getImplementation(model) {
 }
 
 const root = {
-    Admin: getImplementation(Admin),
-    Service: getImplementation(Service),
-    Mechanic: getImplementation(Mechanic),
-    LogCredential: getImplementation(LogCredential)
+    User: getImplementation(User),
 };
 
 module.exports = root;

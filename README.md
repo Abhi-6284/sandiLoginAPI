@@ -3,99 +3,31 @@ Made By Abhi6284
 fuser -k 5416/tcp
 
 <!-- Admin Register -->
-POST https://caarify-abhi.onrender.com/api/admin/register
+POST /api/register
+
+<!-- For Admin -->
 {
-    "username":"admin",
+    "fullName":"Abhishek Lugun",
     "email":"admin@gmail.com",
+    "role": "admin",
     "password":"admin",
     "confirmPassword":"admin"
 }
 
+<!-- For User -->
+{
+    "fullName":"UserOne",
+    "email":"user@gmail.com",
+    "role": "user",
+    "password":"User@123",
+    "confirmPassword":"User@123"
+}
+
 <!-- All Admin Login -->
-POST https://caarify-abhi.onrender.com/api/admin/login
+POST /api/login
+
 {
     "email":"admin@gmail.com",
     "password":"admin"
 }
-
-
-<!-- Add Services -->
-POST https://caarify-abhi.onrender.com/api/add-service
-
-{
-    "custName":"Abhi",
-    "carName":"BMW",
-    "carType":"car Type",
-    "carNumber":"GJ16FG9845",
-    "carModel":"Model",
-    "additionalService":"Add Service",
-    "actions":"Repairing",
-    "emergencyType":"police",
-    "fuelType":"Petrol",
-    "serviceType":"Service Type",
-    "status":"Done",
-    "totalPrice": 8526
-}
-
-<!-- All Service -->
-GET https://caarify-abhi.onrender.com/api/getAll
-
-<!-- Add Mechanic -->
-POST https://caarify-abhi.onrender.com/api/admin/add-mechanic
-
-{
-    "mechanicName":"mechanic1", // More then 2 Alpha
-    "email":"mechanicEmail1@gmail.com",
-    "phone":"9654654654", // Start with 6,7,8,9 and 10 Only
-    "service":"2"
-}
-
-
-<!-- Get Mechanic -->
-
-GET https://caarify-abhi.onrender.com/api/admin/get-mechanic
-
-<!-- Both Service / Mechanic Delete -->
-
-POST https://caarify-abhi.onrender.com/api/admin/delete
-
-{
-    "formName": "mechanic/service",
-    "id":"642a7e7841106747074df269"
-}
-
-<!-- Both Service / Mechanic Update -->
-
-GET https://caarify-abhi.onrender.com/api/admin/update
-{
-    "formName": "mechanic/service",
-    "id":"642bf598dfb1ca0aac9dd94c"
-}
-
-
-POST https://caarify-abhi.onrender.com/api/admin/update
-
-{
-    "formName": "service",
-    "id":"642bf598dfb1ca0aac9dd94c",
-    "mechanicName":"mechanic1",
-    "phone":"9654654654",
-    "service":"2"
-}
-
-{
-    "formName": "service",
-    "id":"642ea3f26f18381b734fb66a",
-    "custName":"TestOneUpdated",
-    "carName":"BMW",
-    "carType":"car Type",
-    "carNumber":"GJ16FG9845",
-    "carModel":"Model",
-    "additionalService":"Add Service",
-    "actions":"Repairing",
-    "emergencyType":"btr",
-    "fuelType":"Petrol",
-    "serviceType":"Service Type",
-    "status":"Done",
-    "totalPrice": 8526
-}
+# sandiLoginAPI

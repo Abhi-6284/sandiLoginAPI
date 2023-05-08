@@ -1,18 +1,16 @@
-const router = require('express').Router(), controller = require('../Controllers/api.controller');
-const jwt = require('jsonwebtoken'), { verifyToken } = require('./auth');
+const router = require('express').Router();
+const controller = require('../Controllers/api.controller');
+const jwt = require('jsonwebtoken');
+const { verifyToken } = require('./auth');
 const { check } = require('express-validator');
 
 const postRoutes = {
-    '/admin/login': [controller.postAdminLogin],
-    '/admin/register': [controller.postRegister],
-    '/add-service': [controller.addService],
-    '/admin/add-mechanic': [ controller.addMechanic ],
-    '/admin/delete' : [controller.dataDelete],
-    '/admin/update': [controller.postUpdate]
+    '/v1/register': [controller.postRegister],
+    '/v1/login': [controller.postAdminLogin],
 }
 
 for (const [path, handlers] of Object.entries(postRoutes)) {
-    if (path == '/admin/login' || path == '/admin/register') {
+    if (path == '/v1/login'|| path == '/v1/login' || path == '/v1/register') {
         router.post(path, handlers)
     } else {
         router.post(path, verifyToken, handlers)
@@ -20,9 +18,9 @@ for (const [path, handlers] of Object.entries(postRoutes)) {
 }
 
 const getRoutes = {
-    '/getAll': [controller.getServices],
-    '/admin/get-mechanic': [controller.getMechanics],
-    '/admin/update': [controller.getUpdate],
+    // '/v1/getAdmin': [controller.getAdminAll],
+    // '/v1/getAll': [controller.getUser],
+    // '/v1/update': [controller.getUpdate],
 }
 
 for (const [path, handlers] of Object.entries(getRoutes)) { router.get(path, verifyToken, handlers) }
