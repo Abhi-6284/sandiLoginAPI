@@ -25,7 +25,7 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
-    "test": "nodemon app.js"
+    "start": "nodemon app.js"
   },
   "repository": {
     "type": "git",
